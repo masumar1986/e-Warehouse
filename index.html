@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e-Warehouse — WMS</title>
+<meta name="theme-color" content="#2D7A58">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%232D7A58'/%3E%3Cpath d='M24 11l11 6.5v13L24 37l-11-6.5v-13z' fill='none' stroke='%23F4FBF7' stroke-width='3'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<svg style="display:none"><symbol id="logo" viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#2D7A58"/><path d="M24 11l11 6.5v13L24 37l-11-6.5v-13z" fill="none" stroke="#F4FBF7" stroke-width="3" stroke-linejoin="round"/><path d="M24 11v13M13 17.5l11 6.5 11-6.5M24 24v13" stroke="#A8D5BA" stroke-width="2.5"/><circle cx="24" cy="24" r="3.5" fill="#fff"/></symbol></svg>
+
+<!-- Login -->
+<div id="login" class="login">
+  <div class="card login-card">
+    <svg class="lgo" width="56" height="56"><use href="#logo"/></svg>
+    <h2>e-Warehouse</h2><p class="muted">WMS Enterprise — masuk untuk melanjutkan</p>
+    <input id="lu" class="inp" placeholder="Username" autocomplete="username">
+    <input id="lp" class="inp" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn" id="lb" onclick="doLogin()">Masuk</button>
+    <p id="lmsg" class="muted" role="status" style="margin-top:10px;text-align:left">⏳ Skrip belum aktif. Jika tulisan ini tidak berubah, file JavaScript belum termuat.</p>
+  </div>
+</div>
+
+<!-- Aplikasi -->
+<div id="app" class="app" style="display:none">
+  <aside class="side" id="side">
+    <div class="brand"><svg class="lgo" width="38" height="38"><use href="#logo"/></svg><div><b>e-Warehouse</b><small>WMS ENTERPRISE</small></div></div>
+    <nav id="menu"></nav>
+    <div class="side-foot muted" id="who"></div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <span class="chip ok"><i class="dot"></i>Tersinkron</span>
+      <div class="search"><i class="bi bi-search"></i><input id="gs" placeholder="Cari kode / nama barang…  (Ctrl+K)" oninput="var v=this.value;clearTimeout(window._ts);window._ts=setTimeout(function(){cari(v)},250)" aria-label="Pencarian cepat"></div>
+      <button class="icon" onclick="refreshHalaman()" title="Muat ulang data" aria-label="Muat ulang data"><i class="bi bi-arrow-clockwise" id="rfi"></i></button>
+      <button class="icon" onclick="nav('barang')" title="Peringatan" aria-label="Peringatan stok"><i class="bi bi-bell"></i><em id="bell" style="display:none">0</em></button>
+      <button class="icon" onclick="toggleTheme()" title="Tema" aria-label="Ganti tema"><i class="bi bi-moon-stars"></i></button>
+      <button class="icon" onclick="logout()" title="Keluar" aria-label="Keluar"><i class="bi bi-box-arrow-right"></i></button>
+    </header>
+
+    <section id="s-dash" class="sec"></section>
+
+    <section id="s-barang" class="sec">
+      <div class="head"><h1>Master Data Barang</h1><button class="btn sm adm" onclick="formBarang()"><i class="bi bi-plus-lg"></i> Tambah Barang</button></div>
+      <div class="card bar"><select id="fd" class="inp" onchange="S.lim=100;renderBarang()"><option value="">Semua Disiplin</option><option>Civil</option><option>Piping</option><option>Mechanical</option><option>Electrical</option></select>
+        <select id="fs" class="inp" onchange="S.lim=100;renderBarang()"><option value="">Semua Status</option><option>Aman</option><option>Menipis</option><option>Habis</option><option>Expired</option></select></div>
+      <div class="card tw"><table id="tb"></table></div>
+    </section>
+
+    <section id="s-masuk" class="sec"></section>
+    <section id="s-keluar" class="sec"></section>
+    <section id="s-req" class="sec"></section>
+    <section id="s-lap" class="sec"></section>
+    <section id="s-lpb" class="sec"></section>
+    <section id="s-pend" class="sec"></section>
+    <section id="s-set" class="sec"></section>
+  </main>
+
+  <nav class="bottom" id="bottom"></nav>
+</div>
+
+<div id="printArea"></div>
+<div id="pbar"></div>
+<div id="toast" class="toast"></div>
+<div id="scanBox" class="scan" style="display:none"><div class="card"><div id="reader"></div>
+  <p class="muted">Arahkan kamera ke barcode/QR. Atau ketik kode manual.</p><button class="btn sec" onclick="stopScan()">Tutup</button></div></div>
+
+<script>(function(){var l=document.getElementById('lmsg');if(l)l.textContent='0) Halaman termuat ✓ (menunggu file JavaScript…)';window.addEventListener('error',function(e){var m=document.getElementById('lmsg');if(m)m.innerHTML+='<br>Error skrip: '+(e.message||'')+(e.lineno?' (baris '+e.lineno+')':'');});})();</script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app1.js"></script>
+<script src="js/app2.js"></script>
+<script src="js/app3.js"></script>
+<script src="js/app4.js"></script>
+<script src="js/app5.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</body>
+</html>
